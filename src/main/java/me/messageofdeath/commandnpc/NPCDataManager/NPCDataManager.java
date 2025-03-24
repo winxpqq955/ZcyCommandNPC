@@ -36,8 +36,7 @@ public class NPCDataManager {
 	}
 	
 	public ArrayList<NPCData> getNPCDatas() {
-		ArrayList<NPCData> data = new ArrayList<>();
-		data.addAll(this.data);
-		return data;
+        return new ArrayList<>(this.data);
 	}
 }
+

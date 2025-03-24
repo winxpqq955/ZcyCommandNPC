@@ -289,4 +289,18 @@ public class CitizenCommands {
 			Messaging.sendError(sender, LanguageSettings.Commands_Citizens_NoCommands.getSetting());
 		}
 	}
+
+	@Command(aliases = { "npc" }, usage = "maketp", desc = "ClickNPC2TP.", modifiers = { "maketp" }, min = 1, max = 1, permission = "commandnpc.admin")
+	public void tpCmds(CommandContext args, CommandSender sender, NPC npc) {
+		int id = npc.getId();
+		CommandNPC.getCommandManager().addNPCData(new NPCData(id));
+		NPCData data = CommandNPC.getCommandManager().getNPCData(id);
+		try {
+			data.setTp(args.getSenderLocation());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		Messaging.send(sender, data.getTp().toString());
+	}
 }

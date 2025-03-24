@@ -11,7 +11,7 @@ import me.messageofdeath.commandnpc.Listeners.NPCListener;
 import me.messageofdeath.commandnpc.NPCDataManager.NPCDataManager;
 import me.messageofdeath.commandnpc.Utilities.BungeeCord.BungeeCordUtil;
 import me.messageofdeath.commandnpc.Utilities.CitizenBackend.CitizenCommandRegister;
-import me.messageofdeath.commandnpc.Utilities.Metrics.Metrics;
+import me.messageofdeath.commandnpc.Utilities.ZcyHub;
 import me.messageofdeath.commandnpc.Utilities.queue.QueueSystem;
 import me.messageofdeath.commandnpc.commands.CitizenCommands;
 import me.messageofdeath.commandnpc.commands.ReloadCommand;
@@ -44,7 +44,6 @@ public class CommandNPC extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		CommandNPC.queueSystem = new QueueSystem(1);
-		new Metrics(this);
 		LanguageConfiguration langConfig = new LanguageConfiguration(this);
 		langConfig.initConfiguration();
 		langConfig.loadConfiguration();
@@ -80,6 +79,7 @@ public class CommandNPC extends JavaPlugin {
 			this.log("Setting up BungeeCord", true);
 			BungeeCordUtil.setupUtil();
 		}
+		ZcyHub.INSTANCE.init();
 		this.log("CommandNPC successfully loaded!", true);
 	}
 
@@ -93,6 +93,7 @@ public class CommandNPC extends JavaPlugin {
 			this.log("Disabling BungeeCord Support", true);
 			BungeeCordUtil.disableUtil();
 		}
+		ZcyHub.INSTANCE.shutdown();
 	}
 
 	public static Economy getEcon() {

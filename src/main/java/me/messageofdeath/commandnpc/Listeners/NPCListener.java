@@ -15,6 +15,7 @@ import me.messageofdeath.commandnpc.NPCDataManager.NPCData;
 import me.messageofdeath.commandnpc.Utilities.BungeeCord.BungeeCordUtil;
 import me.messageofdeath.commandnpc.Utilities.CooldownManager.Cooldown;
 import me.messageofdeath.commandnpc.Utilities.CooldownManager.CooldownManager;
+import me.messageofdeath.commandnpc.Utilities.ZcyHub;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -75,6 +76,10 @@ public class NPCListener implements Listener {
 				scheduler.scheduleSyncDelayedTask(CommandNPC.getInstance(), () -> coolingDown.remove(player.getUniqueId()), this.delay);
 			}
 			NPCData data = CommandNPC.getCommandManager().getNPCData(npc.getId());
+			if (data.getTp() != null) {
+				player.teleport(data.getTp());
+				return;
+			}
 			boolean isOp = player.isOp();
 			ArrayList<NPCCommand> commands = new ArrayList<>();
 			if(data.isRandom()) {
@@ -107,7 +112,8 @@ public class NPCListener implements Listener {
 							}
 						}
 						//------------ BungeeCord ------------
-						if(command.getCommand().toLowerCase().startsWith("server ")) {
+						final var lowerCase = command.getCommand().toLowerCase();
+						if(lowerCase.startsWith("server ")) {
 							if(PluginSettings.BungeeCord.getBoolean()) {
 								String[] args = command.getCommand().split(" ");
 								if(args.length == 2) {
@@ -132,6 +138,26 @@ public class NPCListener implements Listener {
 								Messaging.sendError(player, "Inform the system administrator to look in console for error.");
 								CommandNPC.getInstance().logError("BungeeCord Command", "NPCListener", "onClick(Player, NPC, ClickType)", "BungeeCord is " +
 										"disabled in config.yml, yet an NPC has the command /server registered to it.");
+								continue;
+							}
+						} else if (lowerCase.startsWith("zcyhub ")) {
+							String[] args = command.getCommand().split(" ");
+							if(args.length == 2) {
+								if(command.getDelay() > 0) {
+									scheduler.scheduleSyncDelayedTask(CommandNPC.getInstance(), () -> {
+										ZcyHub.INSTANCE.sendPlayer2Any(player, args[1]);
+										CommandNPC.getInstance().log("Sent '"+player.getName()+"' to zcyhub group '"+args[1]+"'!", true);
+									}, command.getDelay());
+								}else{
+									ZcyHub.INSTANCE.sendPlayer2Any(player, args[1]);
+									CommandNPC.getInstance().log("Sent '"+player.getName()+"' to zcyhub group '"+args[1]+"'!", true);
+								}
+								executeCooldown(player.getUniqueId(), npc.getId(), command.getID(), command.getCooldown());
+								continue;
+							}else{
+								Messaging.sendError(player, "Inform the system administrator to look in console for error.");
+								CommandNPC.getInstance().logError("Zcyhub Command", "NPCListener", "onClick(Player, NPC, ClickType)", "/server command for NPC " +
+										"ID: " + npc.getId() + ", Command ID: " + command.getID() + ", does not follow the format of /server <serverName>");
 								continue;
 							}
 						}

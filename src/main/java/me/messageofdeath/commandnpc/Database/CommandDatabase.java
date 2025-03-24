@@ -6,18 +6,18 @@ import me.messageofdeath.commandnpc.CommandNPC;
 import me.messageofdeath.commandnpc.Database.PluginSettings.PluginSettings;
 import me.messageofdeath.commandnpc.NPCDataManager.NPCCommand;
 import me.messageofdeath.commandnpc.NPCDataManager.NPCData;
+import org.bukkit.Location;
 
 public class CommandDatabase {
 
 	private final CommandNPC instance;
 	private YamlDatabase database;
-
 	public CommandDatabase(CommandNPC instance) {
 		this.instance = instance;
 	}
 
 	public void initDatabase() {
-		database = new YamlDatabase(instance, "commands");
+		database = new YamlDatabase(instance, "data");
 		database.onStartUp();
 	}
 
@@ -66,6 +66,10 @@ public class CommandDatabase {
 						instance.logError("Loading Command", "CommandDatabase", "loadDatabase()", "Incompatible command! ***Not detrimental*** ID: "+idx+" | Line: " + commands);
 					}
 				}
+				for (String location : database.getStringArray("NPCS." + idx + ".Location", new ArrayList<>())) {
+					String[] args = location.split("\\|", 6);
+					data.setTp(new Location(CommandNPC.getInstance().getServer().getWorld(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), Float.parseFloat(args[4]), Float.parseFloat(args[5])));
+				}
 				CommandNPC.getCommandManager().addNPCData(data);
 			}
 			instance.log("Loading commands complete!", true);
@@ -86,6 +90,11 @@ public class CommandDatabase {
 							command.getCost() + "~~~" + command.getDelay() + "~~~" + command.getCooldown() + "~~~" + command.isIgnorePermMsg() + "~~~" + command.isIgnoreMoneyMsg());
 				}
 				database.set("NPCS." + data.getId() + ".Commands", commands);
+				ArrayList<String> location = new ArrayList<>();
+				if (data.getTp() != null) {
+					location.add(String.format("%s|%s|%s|%s|%s|%s", data.getTp().getWorld().getName(), data.getTp().getX(), data.getTp().getY(), data.getTp().getZ(), data.getTp().getYaw(), data.getTp().getPitch()));
+				}
+				database.set("NPCS." + data.getId() + ".Location", location);
 			}
 		});
 	}

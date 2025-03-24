@@ -1,5 +1,7 @@
 package me.messageofdeath.commandnpc.NPCDataManager;
 
+import org.bukkit.Location;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -7,7 +9,8 @@ public class NPCData {
 
 	private final int npcID;
 	private ArrayList<NPCCommand> commands;
-	
+	private Location tp;
+
 	public NPCData(int npcID) {
 		this.npcID = npcID;
 		this.commands = new ArrayList<>();
@@ -54,7 +57,15 @@ public class NPCData {
 	public ArrayList<NPCCommand> getCommands() {
 		return commands;
 	}
-	
+
+	public Location getTp() {
+		return tp;
+	}
+
+	public void setTp(Location tp) {
+		this.tp = tp;
+	}
+
 	private void checkPositions() {
 		ArrayList<NPCCommand> commands = this.commands;
 		commands.sort(comparePosition());

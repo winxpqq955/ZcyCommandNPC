@@ -1,0 +1,41 @@
+plugins {
+    id 'java-library'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
+    }
+    maven {
+        url = uri('https://maven.citizensnpcs.co/repo')
+    }
+    maven {
+        url = uri('https://repo.helpch.at/releases/')
+    }
+    maven {
+        url = uri('https://jitpack.io/')
+    }
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+}
+
+dependencies {
+    compileOnly libs.org.spigotmc.spigot.api
+    compileOnly libs.org.bukkit.bukkit
+    compileOnly libs.com.github.milkbowl.vaultapi
+    compileOnly libs.net.citizensnpcs.citizensapi
+    compileOnly libs.me.clip.placeholderapi
+}
+
+group = 'me.messageofdeath'
+version = '1.9.1'
+description = 'CommandNPC'
+
+java.sourceCompatibility = JavaVersion.VERSION_17
+java.targetCompatibility = JavaVersion.VERSION_17
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
